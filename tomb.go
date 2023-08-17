@@ -35,7 +35,14 @@ func (t *Tomb) Go(fn func()) error {
 
 	t.numAlive++
 	go func() {
-		fn()
+		func() {
+			defer func() {
+				_ = recover()
+			}()
+
+			fn()
+		}()
+
 		t.mut.Lock()
 		defer t.mut.Unlock()
 		t.numAlive--

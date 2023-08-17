@@ -114,3 +114,18 @@ func TestTomb_StuckGoroutine(t1 *testing.T) {
 		t1.Fatal("expected timeout error but got: " + err.Error())
 	}
 }
+
+func TestTomb_PanicInGoFunc(t1 *testing.T) {
+	var t Tomb
+	err := t.Go(func() {
+		panic("some error")
+	})
+	if err != nil {
+		t1.Fatal(err)
+	}
+	t.Kill()
+	err = t.Wait(time.Second)
+	if err != nil {
+		t1.Fatal(err)
+	}
+}
